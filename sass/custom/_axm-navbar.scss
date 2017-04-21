@@ -13,12 +13,21 @@
   min-height: $navbar-height; // Ensure a navbar always shows (e.g., without a .navbar-brand in collapsed mode)
   margin-bottom: $navbar-margin-bottom;
   border: 1px solid transparent;
+  transition: min-height 0.3s linear;
 
   // Prevent floats from breaking the navbar
   @include clearfix;
 
   @media (min-width: $grid-float-breakpoint) {
     border-radius: $navbar-border-radius;
+  }
+
+  @media (max-width: $grid-float-breakpoint-max) {
+    min-height: 60px;
+  }
+
+  &.shrink {
+    min-height: 60px;
   }
 }
 
@@ -166,6 +175,7 @@
   font-size: $font-size-large;
   line-height: $line-height-computed;
   height: $navbar-height;
+  transition: all 0.3s linear;
 
   &:hover,
   &:focus {
@@ -174,6 +184,9 @@
 
   > img {
     display: block;
+    height: 50px;
+    margin-top: -15px;
+    transition: all 0.3s linear;
   }
 
   @media (min-width: $grid-float-breakpoint) {
@@ -181,6 +194,27 @@
     .navbar > .container-fluid & {
       margin-left: -$navbar-padding-horizontal;
     }
+  }
+
+  @media (max-width: $grid-float-breakpoint-max) {
+    padding: ((60 - $line-height-computed) / 2) $navbar-padding-horizontal;
+    height: 60px;
+
+    > img {
+      height: 36px;
+      margin-top: -8px;
+    }
+  }
+}
+
+.navbar.shrink .navbar-brand {
+  padding: ((60 - $line-height-computed) / 2) $navbar-padding-horizontal;
+  height: 60px;
+
+  > img {
+    display: block;
+    height: 36px;
+    margin-top: -8px;
   }
 }
 
@@ -194,8 +228,9 @@
   position: relative;
   float: right;
   margin-right: $navbar-padding-horizontal;
-  padding: 9px 10px;
-  @include navbar-vertical-align(34px);
+  padding: 9px 0px;
+  margin-top: 14px;
+  margin-bottom: 14px;
   background-color: transparent;
   background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
   border: none;
@@ -255,6 +290,13 @@
     padding-top:    10px;
     padding-bottom: 10px;
     line-height: $line-height-computed;
+
+    @media (min-width: $grid-float-breakpoint) {
+      margin-top:    10px;
+      margin-bottom: 10px;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
   }
 
   @media (max-width: $grid-float-breakpoint-max) {
@@ -289,9 +331,22 @@
     > li {
       float: left;
       > a {
-        padding-top:    $navbar-padding-vertical;
-        padding-bottom: $navbar-padding-vertical;
+        margin-top:    $navbar-padding-vertical;
+        margin-bottom: $navbar-padding-vertical;
+        transition: margin 0.3s linear, background 0.2s, color 0.2s;
       }
+    }
+  }
+}
+
+.navbar.shrink .navbar-nav {
+  // Uncollapse the nav
+  @media (min-width: $grid-float-breakpoint) {
+
+    > li > a {
+      margin-top:    ((60 - $line-height-computed) / 2);
+      margin-bottom: ((60 - $line-height-computed) / 2);
+      transition: margin 0.3s linear, background 0.2s, color 0.2s;
     }
   }
 }
@@ -434,7 +489,6 @@
     > li > a {
       color: $navbar-default-link-color;
       position: relative;
-      @include menu-fade(.2s, ease);
 
       &:before {
         position: absolute;
@@ -443,19 +497,31 @@
         height: 2px;
         left: floor(($navbar-padding-horizontal / 2) + 2);
         right: floor(($navbar-padding-horizontal / 2) + 2);
-        bottom: floor(($navbar-padding-vertical) - 6);
+        bottom: -6px;
         background-color: $navbar-default-link-color;
         opacity: 0;
         @include menu-border-fade(.2s, ease);
+
+        @media (max-width: $grid-float-breakpoint-max) {
+          display: none;
+        }
       }
 
       &:hover,
       &:focus {
         color: $navbar-default-link-hover-color;
-        background-color: $navbar-default-link-hover-bg;
+        background-color: transparent;
+
+        @media (max-width: $grid-float-breakpoint-max) {
+          background-color: $navbar-default-link-hover-bg;
+        }
 
         &:before {
           opacity: 1;
+
+          @media (max-width: $grid-float-breakpoint-max) {
+            display: none;
+          }
         }
       }
     }
@@ -463,11 +529,18 @@
       &,
       &:focus {
         color: $navbar-default-link-active-color;
-        background-color: $navbar-default-link-active-bg;
+        background-color: transparent;
       }
       &:hover {
         color: $navbar-default-link-hover-color;
-        background-color: $navbar-default-link-hover-bg;
+        background-color: transparent;
+      }
+
+      @media (max-width: $grid-float-breakpoint-max) {
+        &:focus,
+        &:hover {
+          background-color: $navbar-default-link-hover-bg;
+        }
       }
     }
     > .disabled > a {
@@ -475,7 +548,11 @@
       &:hover,
       &:focus {
         color: $navbar-default-link-disabled-color;
-        background-color: $navbar-default-link-disabled-bg;
+        background-color: transparent;
+
+        @media (max-width: $grid-float-breakpoint-max) {
+          background-color: $navbar-default-link-disabled-bg;
+        }
       }
     }
   }
@@ -500,11 +577,18 @@
   .navbar-nav {
     // Remove background color from open dropdown
     > .open > a {
+      @include menu-fade(.2s, ease);
       &,
       &:hover,
       &:focus {
         background-color: $navbar-default-link-active-bg;
         color: $navbar-default-link-active-color;
+      }
+    }
+
+    .open .dropdown-menu {
+      > li > a {
+        @include menu-fade(.2s, ease);
       }
     }
 
@@ -567,136 +651,488 @@
   }
 }
 
-// Inverse navbar
-
-.navbar-inverse {
-  background-color: $navbar-inverse-bg;
-  border-color: $navbar-inverse-border;
+// Transparent navbar
+.navbar-transparent {
+  background-color: $navbar-transparent-bg;
+  background-image: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%,rgba(0,0,0,0) 90%);
+  background-position: top;
+  background-repeat: no-repeat;
+  border-color: $navbar-transparent-border;
+  border-style: none;
+  transition: background-color 0.3s linear, border-color 0.3s linear, background-position 0.3s linear;
 
   .navbar-brand {
-    color: $navbar-inverse-brand-color;
+    color: $navbar-transparent-brand-color;
     &:hover,
     &:focus {
-      color: $navbar-inverse-brand-hover-color;
-      background-color: $navbar-inverse-brand-hover-bg;
+      color: $navbar-transparent-brand-hover-color;
+      background-color: $navbar-transparent-brand-hover-bg;
     }
   }
 
   .navbar-text {
-    color: $navbar-inverse-color;
+    color: $navbar-transparent-color;
   }
 
   .navbar-nav {
     > li > a {
-      color: $navbar-inverse-link-color;
+      color: $navbar-transparent-link-color;
+
+      &:before {
+        background-color: $navbar-transparent-link-color;
+      }
 
       &:hover,
       &:focus {
-        color: $navbar-inverse-link-hover-color;
-        background-color: $navbar-inverse-link-hover-bg;
+        color: $navbar-transparent-link-hover-color;
+        background-color: transparent;
+
+        @media (max-width: $grid-float-breakpoint-max) {
+          background-color: $navbar-transparent-link-hover-bg;
+        }
       }
     }
     > .active > a {
       &,
-      &:hover,
       &:focus {
-        color: $navbar-inverse-link-active-color;
-        background-color: $navbar-inverse-link-active-bg;
+        color: $navbar-transparent-link-active-color;
+        background-color: transparent;
+      }
+      &:hover {
+        color: $navbar-transparent-link-hover-color;
+        background-color: transparent;
+      }
+
+      @media (max-width: $grid-float-breakpoint-max) {
+        &:focus,
+        &:hover {
+          background-color: $navbar-transparent-link-hover-bg;
+        }
       }
     }
     > .disabled > a {
       &,
       &:hover,
       &:focus {
-        color: $navbar-inverse-link-disabled-color;
-        background-color: $navbar-inverse-link-disabled-bg;
+        color: $navbar-transparent-link-disabled-color;
+        background-color: transparent;
+
+        @media (max-width: $grid-float-breakpoint-max) {
+          background-color: $navbar-transparent-link-disabled-bg;
+        }
       }
     }
   }
 
-  // Darken the responsive nav toggle
   .navbar-toggle {
-    border-color: $navbar-inverse-toggle-border-color;
+    border-color: $navbar-transparent-toggle-border-color;
     &:hover,
     &:focus {
-      background-color: $navbar-inverse-toggle-hover-bg;
+      background-color: $navbar-transparent-toggle-hover-bg;
     }
     .icon-bar {
-      background-color: $navbar-inverse-toggle-icon-bar-bg;
+      background-color: $navbar-transparent-toggle-icon-bar-bg;
     }
   }
 
   .navbar-collapse,
   .navbar-form {
-    border-color: darken($navbar-inverse-bg, 7%);
+    border-color: $navbar-transparent-border;
   }
 
-  // Dropdowns
+  // Dropdown menu items
   .navbar-nav {
+    // Remove background color from open dropdown
     > .open > a {
+      @include menu-fade(.2s, ease);
       &,
       &:hover,
       &:focus {
-        background-color: $navbar-inverse-link-active-bg;
-        color: $navbar-inverse-link-active-color;
+        background-color: $navbar-default-link-active-bg;
+        color: $navbar-default-link-active-color;
+      }
+    }
+
+    .open .dropdown-menu {
+      > li > a {
+        @include menu-fade(.2s, ease);
       }
     }
 
     @media (max-width: $grid-float-breakpoint-max) {
-      // Dropdowns get custom display
+      // Dropdowns get custom display when collapsed
       .open .dropdown-menu {
-        > .dropdown-header {
-          border-color: $navbar-inverse-border;
-        }
-        .divider {
-          background-color: $navbar-inverse-border;
-        }
         > li > a {
-          color: $navbar-inverse-link-color;
+          color: $navbar-default-link-color;
           &:hover,
           &:focus {
-            color: $navbar-inverse-link-hover-color;
-            background-color: $navbar-inverse-link-hover-bg;
+            color: $navbar-default-link-hover-color;
+            background-color: $navbar-default-link-hover-bg;
           }
         }
         > .active > a {
           &,
           &:hover,
           &:focus {
-            color: $navbar-inverse-link-active-color;
-            background-color: $navbar-inverse-link-active-bg;
+            color: $navbar-default-link-active-color;
+            background-color: $navbar-default-link-active-bg;
           }
         }
         > .disabled > a {
           &,
           &:hover,
           &:focus {
-            color: $navbar-inverse-link-disabled-color;
-            background-color: $navbar-inverse-link-disabled-bg;
+            color: $navbar-default-link-disabled-color;
+            background-color: $navbar-default-link-disabled-bg;
           }
         }
       }
     }
   }
 
+
+  // Links in navbars
+  //
+  // Add a class to ensure links outside the navbar nav are colored correctly.
+
   .navbar-link {
-    color: $navbar-inverse-link-color;
+    color: $navbar-transparent-link-color;
     &:hover {
-      color: $navbar-inverse-link-hover-color;
+      color: $navbar-transparent-link-hover-color;
     }
   }
 
   .btn-link {
-    color: $navbar-inverse-link-color;
+    color: $navbar-transparent-link-color;
     &:hover,
     &:focus {
-      color: $navbar-inverse-link-hover-color;
+      color: $navbar-transparent-link-hover-color;
     }
     &[disabled],
     fieldset[disabled] & {
       &:hover,
       &:focus {
-        color: $navbar-inverse-link-disabled-color;
+        color: $navbar-transparent-link-disabled-color;
+      }
+    }
+  }
+
+  @media (max-width: $grid-float-breakpoint-max) {
+    background-color: $navbar-default-bg;
+    background-image: none;
+    border-color: $navbar-default-border;
+    border-style: solid;
+
+    .navbar-brand {
+      color: $navbar-default-brand-color;
+      &:hover,
+      &:focus {
+        color: $navbar-default-brand-hover-color;
+        background-color: $navbar-default-brand-hover-bg;
+      }
+    }
+
+    .navbar-text {
+      color: $navbar-default-color;
+    }
+
+    .navbar-nav {
+      > li > a {
+        color: $navbar-default-link-color;
+
+        &:before {
+          background-color: $navbar-default-link-color;
+        }
+
+        &:hover,
+        &:focus {
+          color: $navbar-default-link-hover-color;
+          background-color: transparent;
+
+          @media (max-width: $grid-float-breakpoint-max) {
+            background-color: $navbar-default-link-hover-bg;
+          }
+        }
+      }
+      > .active > a {
+        &,
+        &:focus {
+          color: $navbar-default-link-active-color;
+          background-color: transparent;
+        }
+        &:hover {
+          color: $navbar-default-link-hover-color;
+          background-color: transparent;
+        }
+
+        @media (max-width: $grid-float-breakpoint-max) {
+          &:focus,
+          &:hover {
+            background-color: $navbar-default-link-hover-bg;
+          }
+        }
+      }
+      > .disabled > a {
+        &,
+        &:hover,
+        &:focus {
+          color: $navbar-default-link-disabled-color;
+          background-color: transparent;
+
+          @media (max-width: $grid-float-breakpoint-max) {
+            background-color: $navbar-default-link-disabled-bg;
+          }
+        }
+      }
+    }
+
+    .navbar-toggle {
+
+      .icon-bar {
+        background-color: $navbar-default-toggle-icon-bar-bg;
+      }
+    }
+
+    .navbar-collapse,
+    .navbar-form {
+      border-color: $navbar-transparent-border;
+    }
+
+    // Dropdown menu items
+    .navbar-nav {
+      // Remove background color from open dropdown
+      > .open > a {
+        @include menu-fade(.2s, ease);
+        &,
+        &:hover,
+        &:focus {
+          background-color: $navbar-default-link-active-bg;
+          color: $navbar-default-link-active-color;
+        }
+      }
+
+      .open .dropdown-menu {
+        > li > a {
+          @include menu-fade(.2s, ease);
+        }
+      }
+
+      @media (max-width: $grid-float-breakpoint-max) {
+        // Dropdowns get custom display when collapsed
+        .open .dropdown-menu {
+          > li > a {
+            color: $navbar-default-link-color;
+            &:hover,
+            &:focus {
+              color: $navbar-default-link-hover-color;
+              background-color: $navbar-default-link-hover-bg;
+            }
+          }
+          > .active > a {
+            &,
+            &:hover,
+            &:focus {
+              color: $navbar-default-link-active-color;
+              background-color: $navbar-default-link-active-bg;
+            }
+          }
+          > .disabled > a {
+            &,
+            &:hover,
+            &:focus {
+              color: $navbar-default-link-disabled-color;
+              background-color: $navbar-default-link-disabled-bg;
+            }
+          }
+        }
+      }
+    }
+
+
+    // Links in navbars
+    //
+    // Add a class to ensure links outside the navbar nav are colored correctly.
+
+    .navbar-link {
+      color: $navbar-default-link-color;
+      &:hover {
+        color: $navbar-default-link-hover-color;
+      }
+    }
+
+    .btn-link {
+      color: $navbar-default-link-color;
+      &:hover,
+      &:focus {
+        color: $navbar-default-link-hover-color;
+      }
+      &[disabled],
+      fieldset[disabled] & {
+        &:hover,
+        &:focus {
+          color: $navbar-default-link-disabled-color;
+        }
+      }
+    }
+  }
+}
+
+// Transparent navbar shrink
+.navbar-transparent.shrink {
+  background-color: $navbar-default-bg;
+  background-position: 0 -60px;
+  border-color: $navbar-default-border;
+  border-style: solid;
+  transition: background-color 0.3s linear, border-color 0.3s linear, background-position 0.3s linear;
+
+  .navbar-brand {
+    color: $navbar-default-brand-color;
+    &:hover,
+    &:focus {
+      color: $navbar-default-brand-hover-color;
+      background-color: $navbar-default-brand-hover-bg;
+    }
+  }
+
+  .navbar-text {
+    color: $navbar-default-color;
+  }
+
+  .navbar-nav {
+    > li > a {
+      color: $navbar-default-link-color;
+
+      &:before {
+        background-color: $navbar-default-link-color;
+      }
+
+      &:hover,
+      &:focus {
+        color: $navbar-default-link-hover-color;
+        background-color: transparent;
+
+        @media (max-width: $grid-float-breakpoint-max) {
+          background-color: $navbar-default-link-hover-bg;
+        }
+      }
+    }
+    > .active > a {
+      &,
+      &:focus {
+        color: $navbar-default-link-active-color;
+        background-color: transparent;
+      }
+      &:hover {
+        color: $navbar-default-link-hover-color;
+        background-color: transparent;
+      }
+
+      @media (max-width: $grid-float-breakpoint-max) {
+        &:focus,
+        &:hover {
+          background-color: $navbar-default-link-hover-bg;
+        }
+      }
+    }
+    > .disabled > a {
+      &,
+      &:hover,
+      &:focus {
+        color: $navbar-default-link-disabled-color;
+        background-color: transparent;
+
+        @media (max-width: $grid-float-breakpoint-max) {
+          background-color: $navbar-default-link-disabled-bg;
+        }
+      }
+    }
+  }
+
+  .navbar-toggle {
+
+    .icon-bar {
+      background-color: $navbar-default-toggle-icon-bar-bg;
+    }
+  }
+
+  .navbar-collapse,
+  .navbar-form {
+    border-color: $navbar-transparent-border;
+  }
+
+  // Dropdown menu items
+  .navbar-nav {
+    // Remove background color from open dropdown
+    > .open > a {
+      @include menu-fade(.2s, ease);
+      &,
+      &:hover,
+      &:focus {
+        background-color: $navbar-default-link-active-bg;
+        color: $navbar-default-link-active-color;
+      }
+    }
+
+    .open .dropdown-menu {
+      > li > a {
+        @include menu-fade(.2s, ease);
+      }
+    }
+
+    @media (max-width: $grid-float-breakpoint-max) {
+      // Dropdowns get custom display when collapsed
+      .open .dropdown-menu {
+        > li > a {
+          color: $navbar-default-link-color;
+          &:hover,
+          &:focus {
+            color: $navbar-default-link-hover-color;
+            background-color: $navbar-default-link-hover-bg;
+          }
+        }
+        > .active > a {
+          &,
+          &:hover,
+          &:focus {
+            color: $navbar-default-link-active-color;
+            background-color: $navbar-default-link-active-bg;
+          }
+        }
+        > .disabled > a {
+          &,
+          &:hover,
+          &:focus {
+            color: $navbar-default-link-disabled-color;
+            background-color: $navbar-default-link-disabled-bg;
+          }
+        }
+      }
+    }
+  }
+
+
+  // Links in navbars
+  //
+  // Add a class to ensure links outside the navbar nav are colored correctly.
+
+  .navbar-link {
+    color: $navbar-default-link-color;
+    &:hover {
+      color: $navbar-default-link-hover-color;
+    }
+  }
+
+  .btn-link {
+    color: $navbar-default-link-color;
+    &:hover,
+    &:focus {
+      color: $navbar-default-link-hover-color;
+    }
+    &[disabled],
+    fieldset[disabled] & {
+      &:hover,
+      &:focus {
+        color: $navbar-default-link-disabled-color;
       }
     }
   }
