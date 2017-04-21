@@ -21,4 +21,15 @@ jQuery(document).ready(function() {
     jQuery('.widget.widget_search form').addClass('panel-body');
     // Show elements immediately
     jQuery('#submit, .tagcloud, button[type=submit], .comment-reply-link, .widget_rss ul, .postform, table#wp-calendar').show("fast");
+    // Shrink navbar when page is scrolled
+    jQuery(window).scroll(function() {
+        if (jQuery(document).scrollTop() > 50) {
+            jQuery('.navbar-fixed-top').addClass('shrink');
+            jQuery('.add').hide();
+        } else {
+            jQuery('.navbar-fixed-top').removeClass('shrink');
+            jQuery('.add').show();
+
+        }
+    });
 });
